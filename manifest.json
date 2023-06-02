@@ -1,0 +1,38 @@
+{
+  "name": "API Extensions",
+  "description": "Hello everybody！",
+  "version": "1.0",
+  "manifest_version": 3,
+  "permissions": ["webRequest", "tabs", "storage"],
+  "host_permissions": ["http://*/api/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["http://*/api/*"],
+      "js": ["scripts/content.js"]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["image/star.png"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "action": {
+    "default_popup": "hello.html",
+    "default_icon": {
+      "16": "icon/icon-16.png",
+      "32": "icon/icon-32.png",
+      "48": "icon/icon-48.png",
+      "128": "icon/icon-128.png"
+    }
+  },
+  "icons": {
+    "16": "icon/icon-16.png",
+    "32": "icon/icon-32.png",
+    "48": "icon/icon-48.png",
+    "128": "icon/icon-128.png"
+  }
+}
