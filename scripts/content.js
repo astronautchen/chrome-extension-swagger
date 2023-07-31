@@ -30,8 +30,8 @@
               arr
             );
           }
-          console.log('element', element);
-          param.suffix += `${element.name}=${element.name}&`;
+          console.log('elemen111', element);
+          param.suffix += element.name + '=${' + element.name + '}&';
         }
       }
       if (param.suffix) {
@@ -66,7 +66,7 @@
       path: param,
     });
   };
-  const newVideoLoaded = () => {
+  const newElementLoaded = () => {
     const bookmarkBtnExists = document.getElementsByClassName('bookmark-btn');
     if (!bookmarkBtnExists.length) {
       const btngroup = document.getElementsByClassName('opblock-summary');
@@ -86,8 +86,9 @@
   chrome.runtime.onMessage.addListener((obj, sender, response) => {
     const { type, data } = obj;
     if (type === 'NEW') {
+      console.log(3);
       json = data;
-      newVideoLoaded();
+      newElementLoaded();
     }
   });
 })();

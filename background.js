@@ -1,13 +1,16 @@
-chrome.webRequest.onHeadersReceived.addListener(
+chrome.webRequest.onCompleted.addListener(
   function (details) {
+    console.log('details', details);
     if (
       details.type === 'xmlhttprequest' &&
       details.url.includes('openapi.json') &&
       details.frameId == 0
     ) {
+      console.log(1)
       fetch(details.url)
         .then((response) => response.json())
         .then(async (data) => {
+          console.log(2)
           const tabs = await chrome.tabs.query({
             currentWindow: true,
             active: true,
@@ -26,12 +29,3 @@ chrome.webRequest.onHeadersReceived.addListener(
   },
   { urls: ['http://*/api/*'] }
 );
-// chrome.tabs.onActivated.addListener(function (activeInfo) {
-//   // 当标签页切换时触发
-//   // var tabId = activeInfo.tabId;
-//   console.log('activeInfo',activeInfo)
-//   chrome.storage.sync.clear(function () {
-//     console.log('数据已成功清除');
-//   });
-//   // 执行操作
-// });
