@@ -4,13 +4,13 @@
   "version": "1.0",
   "manifest_version": 3,
   "permissions": ["webRequest", "tabs", "storage"],
-  "host_permissions": ["http://*/api/*"],
+  "host_permissions": ["<all_urls>"],
   "background": {
     "service_worker": "background.js"
   },
   "content_scripts": [
     {
-      "matches": ["http://*/api/*"],
+      "matches": ["<all_urls>"],
       "js": ["scripts/content.js"]
     }
   ],

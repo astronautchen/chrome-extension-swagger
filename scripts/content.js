@@ -3,10 +3,11 @@
 
   const addNewBookmarkEventHandler = async (a) => {
     let param = {};
-    let pathItem = json.paths[a.split('\n')[1]][a.split('\n')[0].toLowerCase()];
-    param.name = camelCase(pathItem.summary);
-    param.path = a.split('\n')[1].replace('{', '${');
-    param.method = a.split('\n')[0].toLowerCase();
+    const [method, url, description] = a.split('\n');
+    let pathItem = json.paths[url][method.toLowerCase()];
+    param.path = url.replace('{', '${');
+    param.method = method.toLowerCase();
+    param.name = camelCase(description);
 
     let arr = [];
     param.suffix = '';
@@ -24,13 +25,8 @@
         if (element.in == 'query') {
           if (findKey(element, '$ref')) {
             let ref = findKey(element, '$ref');
-            handelDataType(
-              json.components.schemas[ref.split('/').at(-1)],
-              json.components.schemas,
-              arr
-            );
+            handelDataType(json.components.schemas[ref.split('/').at(-1)], json.components.schemas, arr);
           }
-          console.log('elemen111', element);
           param.suffix += element.name + '=${' + element.name + '}&';
         }
       }
@@ -44,11 +40,7 @@
       if (v) {
         let ref = findKey(v, '$ref');
         if (ref) {
-          handelDataType(
-            json.components.schemas[ref.split('/').at(-1)],
-            json.components.schemas,
-            arr
-          );
+          handelDataType(json.components.schemas[ref.split('/').at(-1)], json.components.schemas, arr);
           param.type = json.components.schemas[ref.split('/').at(-1)].title;
         } else {
           const { type, items } = v;
@@ -62,6 +54,7 @@
     }
     arr = arr.join('\n').replaceAll('integer', 'number');
     param.inter = arr;
+    console.log('param', param);
     chrome.storage.sync.set({
       path: param,
     });
@@ -71,22 +64,17 @@
     if (!bookmarkBtnExists.length) {
       const btngroup = document.getElementsByClassName('opblock-summary');
       for (let i = 0; i < btngroup.length; i++) {
-        // bookmarkBtn = document.createElement('div');
         bookmarkBtn = document.createElement('img');
         bookmarkBtn.src = chrome.runtime.getURL('image/star.png');
-        // bookmarkBtn.innerText = 'test';
         bookmarkBtn.className = 'bookmark-btn';
         btngroup[i].appendChild(bookmarkBtn);
-        bookmarkBtn.addEventListener('click', () =>
-          addNewBookmarkEventHandler(`${btngroup[i].innerText}`)
-        );
+        bookmarkBtn.addEventListener('click', () => addNewBookmarkEventHandler(`${btngroup[i].innerText}`));
       }
     }
   };
   chrome.runtime.onMessage.addListener((obj, sender, response) => {
     const { type, data } = obj;
     if (type === 'NEW') {
-      console.log(3);
       json = data;
       newElementLoaded();
     }
@@ -158,11 +146,10 @@ function handelDataType(bodyProperties, allSchema, arr) {
     arr.push(body);
   } else {
     if (bodyProperties.enum) {
-      arr.push(
-        `export type ${title} =${bodyProperties.enum
-          .map((i) => (type == 'integer' ? i : `"${i}"`))
-          .join(' | ')};`
-      );
+      arr.push(`export type ${title} =${bodyProperties.enum.map((i) => (type == 'integer' ? i : `"${i}"`)).join(' | ')};`);
     }
   }
+}
+function capitalizeFirstLetter(str) {
+  return str.charAt(0).toUpperCase() + str.substr(1);
 }

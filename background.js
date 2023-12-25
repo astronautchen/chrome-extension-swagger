@@ -1,21 +1,16 @@
+console.log(111);
 chrome.webRequest.onCompleted.addListener(
   function (details) {
-    console.log('details', details);
-    if (
-      details.type === 'xmlhttprequest' &&
-      details.url.includes('openapi.json') &&
-      details.frameId == 0
-    ) {
-      console.log(1)
+    // console.log('details', details);
+    if (details.type === 'xmlhttprequest' && details.url.includes('openapi.json') && details.frameId == 0) {
       fetch(details.url)
         .then((response) => response.json())
         .then(async (data) => {
-          console.log(2)
           const tabs = await chrome.tabs.query({
             currentWindow: true,
             active: true,
           });
-          chrome.tabs.sendMessage(tabs[0].id, {
+          const response = await chrome.tabs.sendMessage(tabs[0].id, {
             type: 'NEW',
             data,
           });
@@ -27,5 +22,5 @@ chrome.webRequest.onCompleted.addListener(
       return { cancel: true };
     }
   },
-  { urls: ['http://*/api/*'] }
+  { urls: ['<all_urls>'] }
 );

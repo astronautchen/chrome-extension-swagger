@@ -3,15 +3,10 @@ console.log('This is a popup!');
 const addNewBookmark = (bookmarks, bookmark) => {
   const bookmarkTitleElement = document.createElement('div');
   const { name, path, type, pathParameter, method, inter, suffix } = bookmark;
-  bookmarkTitleElement.innerHTML = 
-  `
+  bookmarkTitleElement.innerHTML = `
 <pre class="language-javascript"><code>
-  export const ${name} = (${
-    pathParameter ? pathParameter.replaceAll('integer', 'number') : ''
-  }${pathParameter && type ? ',' : ''}${type ? 'data:' + type : ''}) => {
-    return axios.${method}(${'`' + path + (suffix ? '?' + suffix : '') + '`'}${
-    type ? ',data' : ''
-  })
+  export const ${name} = (${pathParameter ? pathParameter.replaceAll('integer', 'number') : ''}${pathParameter && type ? ',' : ''}${type ? 'data:' + type : ''}) => {
+    return axios.${method}(${'`' + path + (suffix ? '?' + suffix : '') + '`'}${type ? ',data' : ''})
   }</code></pre>
   <div class="title">------ interface -------</div>
   <pre class="language-typescript"><code>${inter}</code></pre>
@@ -35,16 +30,15 @@ const viewBookmarks = (currentBookmarks = null) => {
 
 document.addEventListener('DOMContentLoaded', async () => {
   const activeTab = await getActiveTabURL();
-
-  if (activeTab.url.includes('/api/')) {
+  console.log('activeTab', activeTab);
+  if (activeTab.url.includes('/docs')) {
     chrome.storage.sync.get('path', (data) => {
-      console.log(data);
       const currentVideoBookmarks = data.path || null;
       viewBookmarks(currentVideoBookmarks);
     });
   } else {
     const container = document.getElementsByClassName('container')[0];
 
-    container.innerHTML = '<div class="title">This is not a api page.</div>';
+    container.innerHTML = '<div class="title">你页面不对</div>';
   }
 });
